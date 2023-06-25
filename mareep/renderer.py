@@ -72,7 +72,7 @@ class Renderer(Dataclass):
                 with open(template_file) as fin:
                     template: Template = Template(fin.read())
 
-                if template_file.suffix == ".j2":
+                if template_file.suffix[1:] in self.extensions:
                     output_file: Path = self.output_path / template_file.stem
                 else:
                     output_file: Path = self.output_path / template_file.name
