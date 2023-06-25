@@ -13,29 +13,50 @@ __all__ = ["Renderer"]
 
 class Renderer(Dataclass):
     template_path: Path
-    output_path: Path
-    data_path: Path = None
+    extensions: List[str] = ["j2", "jinja2", "jinja"]
+
     case_sensitive: bool = True
+
+    use_env: bool = False
+    env_prefix: str = ""
+    
+    vars_path: Path = None
+    section: str = None
+
+    output_path: Path
 
     def render(self, **kwargs):
         assert self.template_path.exists(), f"Invalid path: {self.template_path}"
 
         template_files = []
         if self.template_path.is_dir():
-            template_files = [file for file in self.template_path.rglob("*.j2")]
+            template_files = []
+            for extension in self.extensions:
+                template_files += [
+                    file for file in self.template_path.rglob(f"*.{extension}")
+                ]
         else:
             template_files = [self.template_path]
 
-        env = os.environ.copy()
-        if not self.case_sensitive:
-            env = {key.lower(): val for key, val in env.items()}
+        env = {}
+        if self.use_env:
+            for key, val in os.environ.items():
+                if not self.case_sensitive:
+                    key = key.lower()
+                
+                if key.startswith(self.env_prefix):
+                    key = key[len(self.env_prefix):]
+                    env[key] = val
 
-        if self.data_path is not None:
-            assert self.data_path.exists(), f"Invalid path: {self.data_path}"
-            data_type = self.data_path.suffix[1:]
-            assert data_type in loaders, f"Invalid data file: {self.data_path}"
+        if self.vars_path is not None:
+            assert self.vars_path.exists(), f"Invalid path: {self.vars_path}"
+            data_type = self.vars_path.suffix[1:]
+            assert data_type in loaders, f"Invalid data file: {self.vars_path}"
 
-            data = loaders[data_type].load(self.data_path)
+            data = loaders[data_type].load(self.vars_path)
+            if self.section is not None:
+                data = data[self.section]
+            
             if not self.case_sensitive:
                 data = {key.lower(): val for key, val in data.items()}
 
