@@ -1,0 +1,5 @@
+# Editable Git install with no remote (aieval==0.0.1)
+Jinja2
+mousse
+PyYAML
+typer
