@@ -9,7 +9,6 @@ from .renderer import Renderer
 
 @app.command(
     context_settings={"allow_extra_args": True, "ignore_unknown_options": True},
-    invoke_without_command=True,
 )
 def render(
     ctx: Context,

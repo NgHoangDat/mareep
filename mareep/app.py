@@ -78,3 +78,11 @@ class App(Typer):
 
 
 app = App(pretty_exceptions_show_locals=False)
+
+
+@app.command()
+def about():
+    import random
+    import cowsay
+    char = random.choice(cowsay.char_names)
+    print(cowsay.get_output_string(char, "This is a module for ai-evaluation"))

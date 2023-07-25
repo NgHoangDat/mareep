@@ -4,7 +4,7 @@ from typing import *
 import setuptools
 
 __PACKAGE__ = "mareep"
-__VERSION__ = "0.0.3"
+__VERSION__ = "0.0.4"
 
 base_dir = Path(__file__).resolve().parent
 
